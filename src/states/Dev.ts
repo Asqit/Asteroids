@@ -3,16 +3,13 @@ import { Asteroid } from '../entities/Asteroid';
 import { gameConfig } from '../config';
 import { hero } from '../entities/Player';
 import { initInput } from '../utils/Input';
-import { Star } from '../entities/Star';
-
+import { Bullet } from '../entities/Bullet';
+import { rects } from '../utils/Collision';
+import { Particle } from '../entities/Particle';
 class Dev implements IState {
 	public onEnter() {
 		initInput();
 		const { entities } = gameConfig;
-
-		for (let i = 0; i < 70; i++) {
-			entities.push(new Star());
-		}
 
 		for (let i = 0; i < 10; i++) {
 			entities.push(new Asteroid());
@@ -23,6 +20,28 @@ class Dev implements IState {
 	public onExit() {}
 	public onPause() {}
 	public onResume() {}
+
+	private handleCollision() {
+		const { entities } = gameConfig;
+
+		const bullets = entities.filter((e) => e.id === 'BULLET');
+		const asteroids = entities.filter((e) => e.id === 'ASTEROID');
+
+		asteroids.forEach((asteroid) => {
+			bullets.forEach((bullet) => {
+				if (rects(asteroid, bullet)) {
+					bullet.active = false;
+					asteroid.active = false;
+					entities.push(
+						new Particle(asteroid.x, asteroid.y),
+						new Particle(asteroid.x, asteroid.y),
+						new Particle(asteroid.x, asteroid.y)
+					);
+				}
+			});
+		});
+	}
+
 	public render() {
 		let { width, height, entities } = gameConfig;
 		const ctx = gameConfig.ctx as CanvasRenderingContext2D;
@@ -30,7 +49,7 @@ class Dev implements IState {
 		ctx.clearRect(0, 0, width, height);
 
 		if (entities && entities.length !== 0) {
-			entities = entities.filter((e) => e.active === true);
+			gameConfig.entities = entities.filter((e) => e.active === true);
 			entities.forEach((e) => e.render());
 		}
 	}
@@ -39,6 +58,7 @@ class Dev implements IState {
 
 		if (entities && entities.length !== 0) {
 			entities.forEach((e) => e.update());
+			this.handleCollision();
 		}
 	}
 }

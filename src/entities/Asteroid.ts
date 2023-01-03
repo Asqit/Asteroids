@@ -1,6 +1,6 @@
 import { IEntity } from './IEntity';
 import { degreeToRadian, rand, randEven } from '../utils/Maths';
-import { gameConfig } from '../config';
+import { GameObject, gameConfig } from '../config';
 import { delta } from '../utils/Perf';
 
 export class Asteroid implements IEntity {
@@ -11,14 +11,15 @@ export class Asteroid implements IEntity {
 	public speed: number;
 	public angle: number;
 	public active: boolean;
+	public id: GameObject = 'ASTEROID';
 
 	constructor() {
 		const { width, height } = gameConfig;
 		this.x = rand(0, width);
 		this.y = rand(0, height);
-		this.w = randEven(8, 48);
+		this.w = randEven(16, 64);
 		this.h = this.w;
-		this.speed = rand(20, 300);
+		this.speed = 3000 / this.w;
 		this.angle = degreeToRadian(rand(0, 360));
 		this.active = true;
 	}
@@ -69,8 +70,25 @@ export class Asteroid implements IEntity {
 		// Fill..
 		ctx.strokeStyle = '#ffffff';
 
-		// Remember coords are translated
-		ctx.strokeRect(-this.w / 2, -this.h / 2, this.w, this.h);
+		let x = -this.w / 2;
+		let y = -this.h / 2;
+
+		ctx.beginPath();
+		ctx.moveTo(x, y);
+
+		ctx.lineTo(x + this.w / 2, y);
+		ctx.lineTo(x + this.w / 1.2, y + this.h / 4);
+		ctx.lineTo(x + this.w, y);
+		ctx.lineTo(x + this.w, y + this.h / 1.2);
+		ctx.lineTo(x + this.w / 1.2, y + this.h);
+		ctx.lineTo(x + this.w / 5, y + this.h);
+		ctx.lineTo(x, y + this.h / 2);
+		ctx.lineTo(x, y);
+
+		ctx.lineTo(x, y);
+
+		ctx.stroke();
+
 		ctx.restore();
 	}
 }

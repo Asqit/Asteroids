@@ -1,3 +1,5 @@
+import { GameObject } from '../config';
+
 export interface IEntity {
 	x: number;
 	y: number;
@@ -6,6 +8,7 @@ export interface IEntity {
 	speed: number;
 	angle: number;
 	active: boolean;
+	id: GameObject;
 	update: () => void;
 	render: () => void;
 }

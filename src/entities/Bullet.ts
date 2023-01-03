@@ -1,4 +1,4 @@
-import { gameConfig } from '../config';
+import { GameObject, gameConfig } from '../config';
 import { delta } from '../utils/Perf';
 import { IEntity } from './IEntity';
 
@@ -14,7 +14,8 @@ export class Bullet implements IBullet {
 	public y: number = 0;
 	public w: number = 4;
 	public h: number = 4;
-	public speed: number = 300;
+	public id: GameObject = 'BULLET';
+	public speed: number = 500;
 	public angle: number = 0;
 	public active: boolean = true;
 

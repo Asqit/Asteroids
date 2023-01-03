@@ -2,6 +2,13 @@ import { IEntity } from './entities/IEntity';
 import { Frame } from './utils/Frame';
 import { StateStack } from './utils/StateStack';
 
+export type GameObject =
+	| 'PLAYER'
+	| 'BULLET'
+	| 'ALIEN'
+	| 'ASTEROID'
+	| 'PARTICLE';
+
 interface IGameConfig {
 	frame: Frame;
 	ctx: RenderingContext;

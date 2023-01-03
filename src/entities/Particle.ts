@@ -1,9 +1,9 @@
-import { gameConfig } from '../config';
+import { GameObject, gameConfig } from '../config';
 import { degreeToRadian, rand, randEven } from '../utils/Maths';
 import { delta } from '../utils/Perf';
 import { IEntity } from './IEntity';
 
-export class Star implements IEntity {
+export class Particle implements IEntity {
 	public x: number;
 	public y: number;
 	public w: number;
@@ -11,16 +11,21 @@ export class Star implements IEntity {
 	public speed: number;
 	public angle: number;
 	public active: boolean;
+	public id: GameObject = 'PARTICLE';
 
-	constructor() {
+	constructor(x: number, y: number) {
 		const { width, height } = gameConfig;
-		this.x = rand(0, width);
-		this.y = rand(0, height);
-		this.w = 2;
+		this.x = x;
+		this.y = y;
+		this.w = 3;
 		this.h = this.w;
-		this.speed = 3;
+		this.speed = 50;
 		this.angle = degreeToRadian(rand(0, 360));
 		this.active = true;
+
+		setTimeout(() => {
+			this.active = false;
+		}, 5000);
 	}
 
 	public render() {
@@ -42,5 +47,8 @@ export class Star implements IEntity {
 		ctx.restore();
 	}
 
-	public update() {}
+	public update() {
+		this.x += this.speed * Math.cos(this.angle) * delta;
+		this.y += this.speed * Math.sin(this.angle) * delta;
+	}
 }
