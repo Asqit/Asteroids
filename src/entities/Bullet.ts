@@ -12,7 +12,7 @@ export class Bullet implements IBullet {
 	public owner: BulletOwner = 'PLAYER';
 	public x: number = 0;
 	public y: number = 0;
-	public w: number = 4;
+	public w: number = 8;
 	public h: number = 4;
 	public id: GameObject = 'BULLET';
 	public speed: number = 500;

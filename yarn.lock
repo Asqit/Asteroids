@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@arrow-js/core@^1.0.0-alpha.5":
+  version "1.0.0-alpha.5"
+  resolved "https://registry.yarnpkg.com/@arrow-js/core/-/core-1.0.0-alpha.5.tgz#ee33bb92a844e9d384a8ea9a8febe7b045217b29"
+  integrity sha512-BTDZim5kd5eupExxLLm/hkhtfL2heBSb8a/YSUxujjAjj+s7ohsDvBUDtdAS8uLDHzJ3D4vGON2VvSxpbaYdNw==
+
 "@discoveryjs/json-ext@^0.5.0":
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz#1d572bfbbe14b7704e0ba0f39b74815b84870d70"

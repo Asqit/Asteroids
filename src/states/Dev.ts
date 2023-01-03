@@ -33,12 +33,17 @@ class Dev implements IState {
 					bullet.active = false;
 					asteroid.active = false;
 					entities.push(
-						new Particle(asteroid.x, asteroid.y),
-						new Particle(asteroid.x, asteroid.y),
-						new Particle(asteroid.x, asteroid.y)
+						new Particle({ x: asteroid.x, y: asteroid.y }),
+						new Particle({ x: asteroid.x, y: asteroid.y }),
+						new Particle({ x: asteroid.x, y: asteroid.y })
 					);
 				}
 			});
+
+			if (rects(hero, asteroid)) {
+				hero.hit();
+				asteroid.active = false;
+			}
 		});
 	}
 

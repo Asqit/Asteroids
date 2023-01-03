@@ -3,6 +3,13 @@ import { degreeToRadian, rand, randEven } from '../utils/Maths';
 import { delta } from '../utils/Perf';
 import { IEntity } from './IEntity';
 
+interface IParticleProps {
+	x: number;
+	y: number;
+	speed?: number;
+	angle?: number;
+}
+
 export class Particle implements IEntity {
 	public x: number;
 	public y: number;
@@ -13,14 +20,15 @@ export class Particle implements IEntity {
 	public active: boolean;
 	public id: GameObject = 'PARTICLE';
 
-	constructor(x: number, y: number) {
+	constructor(props: IParticleProps) {
 		const { width, height } = gameConfig;
+		const { angle, x, y, speed } = props;
 		this.x = x;
 		this.y = y;
 		this.w = 3;
 		this.h = this.w;
-		this.speed = 50;
-		this.angle = degreeToRadian(rand(0, 360));
+		this.speed = speed ?? 50;
+		this.angle = angle ?? degreeToRadian(rand(0, 360));
 		this.active = true;
 
 		setTimeout(() => {

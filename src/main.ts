@@ -1,9 +1,9 @@
 import { asteroids } from './game';
-import { dev } from './states/Dev';
+import { menu } from './states/Menu';
 
 function main() {
 	try {
-		asteroids.init(dev);
+		asteroids.init(menu);
 	} catch (error) {
 		console.error(error);
 		alert(error);
