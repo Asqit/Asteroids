@@ -6,8 +6,8 @@ export interface IState {
 	props?: any;
 	onEnter: () => void;
 	onExit: () => void;
-	onPause: () => void;
-	onResume: () => void;
+	onPause?: () => void;
+	onResume?: () => void;
 	render: () => void;
 	update: () => void;
 }

@@ -52,11 +52,12 @@ class Player implements IPlayer {
 		ctx.save();
 		ctx.translate(this.x + this.w / 2, this.y + this.h / 2);
 		ctx.rotate(this.angle);
-		ctx.strokeStyle = 'white';
 
 		let x = -this.w / 2;
 		let y = -this.h / 2;
 
+		// Player triangle
+		ctx.strokeStyle = 'white';
 		ctx.beginPath();
 		ctx.moveTo(x, y);
 		ctx.lineTo(x + this.w, y + this.h / 2);
@@ -178,6 +179,7 @@ class Player implements IPlayer {
 		if (this.hitPrepared) {
 			if (this.lives <= 1) {
 				this.handleSave();
+				this.active = false;
 			}
 
 			this.lives -= 1;
@@ -185,6 +187,14 @@ class Player implements IPlayer {
 		}
 
 		setTimeout(() => (this.hitPrepared = true), 2000);
+	}
+
+	public isAlive() {
+		return this.active;
+	}
+
+	public addScore() {
+		this.score += 10;
 	}
 }
 

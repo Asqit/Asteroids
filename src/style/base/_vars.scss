@@ -1,0 +1,16 @@
+// Futuristic (bladerunner-like) font
+@import url('https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap');
+
+$ff-primary: 'Play', sans-serif;
+
+// Colors
+$clr-primary-darkest: #0f380f;
+$clr-primary-dark: #306230;
+$clr-primary: #8bac0f;
+$clr-primary-lightest: #9bbc0f;
+$clr-black: #000000;
+
+// Element shaping
+$transition: all 200ms ease-in-out;
+
+// Mixins

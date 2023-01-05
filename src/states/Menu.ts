@@ -2,14 +2,14 @@ import { gameConfig } from '../config';
 import { Particle } from '../entities/Particle';
 import { rand } from '../utils/Maths';
 import { IState } from './IState';
-import { html } from '@arrow-js/core';
+import MainMenu from '../components/menu/Menu';
+import { play } from './Play';
 
 class Menu implements IState {
-	onEnter() {
+	public onEnter() {
 		const { entities, width, height } = gameConfig;
 
-		// Creating space full of stars
-		for (let i = 0; i < 70; i++) {
+		for (let i = 0; i < 75; i++) {
 			entities.push(
 				new Particle({ x: rand(0, width), y: rand(0, height) })
 			);
@@ -18,38 +18,33 @@ class Menu implements IState {
 		this.renderHtml();
 	}
 
-	onExit() {}
-	onPause() {}
-	onResume() {}
-
-	render() {
+	public render() {
 		const { entities } = gameConfig;
 
-		entities.forEach((e) => e.render());
+		entities.forEach((entity) => {
+			entity.render();
+		});
 	}
 
-	update() {}
+	private handlePlay() {
+		gameConfig.stateStack.pop();
+		gameConfig.stateStack.push(play);
+	}
 
-	renderHtml() {
-		const mainMenuTemplate = html`
-			<section class="menu">
-				<article class="menu__container">
-					<h1>Asteroids</h1>
-					<ul class="main__container__list">
-						<li>
-							<button onclick="">Play game</button>
-						</li>
-						<li>
-							<button onclick="${console.log('Hello world!')}">
-								High score
-							</button>
-						</li>
-					</ul>
-				</article>
-			</section>
-		`;
+	private handleHighScore() {}
 
-		mainMenuTemplate(document.body);
+	private renderHtml() {
+		MainMenu({
+			onPlay: this.handlePlay,
+			onHighScore: this.handleHighScore,
+		})(document.body);
+	}
+
+	public update() {}
+
+	public onExit() {
+		gameConfig.entities.length = 0;
+		document.querySelector('.main-menu')?.remove();
 	}
 }
 

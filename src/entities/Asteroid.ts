@@ -13,13 +13,17 @@ export class Asteroid implements IEntity {
 	public active: boolean;
 	public id: GameObject = 'ASTEROID';
 
-	constructor() {
-		const { width, height } = gameConfig;
-		this.x = rand(0, width);
-		this.y = rand(0, height);
-		this.w = randEven(16, 64);
-		this.h = this.w;
-		this.speed = 3000 / this.w;
+	constructor(
+		x = rand(0, gameConfig.width),
+		y = rand(0, gameConfig.height),
+		w = 128,
+		speed = 80
+	) {
+		this.x = x;
+		this.y = y;
+		this.w = w;
+		this.h = w;
+		this.speed = speed;
 		this.angle = degreeToRadian(rand(0, 360));
 		this.active = true;
 	}

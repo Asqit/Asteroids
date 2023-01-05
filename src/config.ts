@@ -30,6 +30,11 @@ frame.setRenderingContext('2d');
 const ctx = frame.getRenderingContext!;
 const entities: IEntity[] = [];
 
+/**
+ * **Description:** Since objects are passed by reference I created this object which basically allows access
+ * to some global variables. It's very similar to react's context API, only that this is simpler and does not involve
+ * Subscriber/notifier pattern.
+ */
 export const gameConfig: IGameConfig = {
 	stateStack,
 	frame,
