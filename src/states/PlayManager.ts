@@ -30,8 +30,6 @@ class PlayManager {
 						new Asteroid(32, 300),
 						new Asteroid(32, 300)
 					);
-				} else if (asteroid.w === 32) {
-					entities.push(new Asteroid(16, 600), new Asteroid(16, 600));
 				}
 			}
 
@@ -78,34 +76,33 @@ class PlayManager {
 	}
 
 	public update() {
-		const { entities } = gameConfig;
-
 		gameConfig.entities = gameConfig.entities.filter(
 			(e) => e.active === true
 		);
 
-		const asteroids = entities.filter((entity) => entity.id === 'ASTEROID');
-
 		this.collision();
 
+		let asteroids = gameConfig.entities.filter(
+			(entity) => entity.id === 'ASTEROID'
+		);
+
 		if (asteroids.length === 0 && hero.isAlive()) {
-			for (let i = 0; i < 10; i++) {
-				entities.push(new Asteroid());
+			for (let i = 0; i < 4; i++) {
+				gameConfig.entities.push(new Asteroid());
 			}
 		}
 
-		if (entities.length > 0) {
-			entities.forEach((e) => e.update());
+		if (gameConfig.entities.length > 0) {
+			gameConfig.entities.forEach((e) => e.update());
 		}
 	}
 
 	public init() {
-		const { entities } = gameConfig;
 		for (let i = 0; i < 4; i++) {
-			entities.push(new Asteroid());
+			gameConfig.entities.push(new Asteroid());
 		}
 
-		entities.push(hero);
+		gameConfig.entities.push(hero);
 	}
 }
 

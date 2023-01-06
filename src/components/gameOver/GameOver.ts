@@ -1,17 +1,21 @@
 import { html } from '@arrow-js/core';
 
-interface IGameOverProps {}
+interface IGameOverProps {
+	score: number;
+	highScore: number;
+	playAgain: () => void;
+}
 
 export default function GameOver(props: IGameOverProps) {
-	const {} = props;
+	const { score, highScore, playAgain } = props;
 
 	return html`
 		<section class="game-over">
 			<article class="game-over__container">
 				<h1>Game Over</h1>
-				<p>Your score was</p>
-				<p>highest achieved score was</p>
-				<button>play again</button>
+				<p>Your score was ${score}</p>
+				<p>highest achieved score was ${highScore}</p>
+				<button @click="${playAgain}">play again</button>
 			</article>
 		</section>
 	`;

@@ -1,10 +1,9 @@
 import { GameObject, gameConfig } from '../config';
 import { isDown } from '../utils/Input';
-import { Vec2, rand } from '../utils/Maths';
+import { Vec2 } from '../utils/Maths';
 import { delta } from '../utils/Perf';
 import { Bullet } from './Bullet';
 import { IEntity } from './IEntity';
-import { Particle } from './Particle';
 
 interface IPlayer extends IEntity {}
 
@@ -17,7 +16,7 @@ class Player implements IPlayer {
 	public y: number = 0;
 	public w: number = 32;
 	public h: number = 32;
-	public speed: number = 350;
+	public speed: number = 600;
 	public angle: number = 0;
 	public active: boolean = true;
 	public id: GameObject = 'PLAYER';
@@ -27,15 +26,14 @@ class Player implements IPlayer {
 	 */
 	private velocity: Vec2 = new Vec2(0, 0);
 	private acceleration: Vec2 = new Vec2(0, 0);
-	private friction: number = 0.97;
+	private friction: number = 0.99;
 
 	private score: number = 0;
+	private highScore: number = 0;
 	private lives: number = 3;
 	private cooldown: number = 0;
-	private cooldownDecrement: number = 2.5;
+	private cooldownDecrement: number = 6;
 	private hitPrepared: boolean = true;
-
-	constructor() {}
 
 	// Private Methods --------------------------------------
 	private renderUi() {
@@ -105,9 +103,9 @@ class Player implements IPlayer {
 
 		// Rotating player
 		if (isDown('A')) {
-			this.angle -= 2 * delta;
+			this.angle -= 3 * delta;
 		} else if (isDown('D')) {
-			this.angle += 2 * delta;
+			this.angle += 3 * delta;
 		}
 
 		// Shooting
@@ -162,6 +160,19 @@ class Player implements IPlayer {
 		localStorage.setItem(SAVE_NAME, JSON.stringify(payload));
 	}
 
+	private handleLoad() {
+		if (!localStorage.getItem('asteroids/player')) {
+			console.warn('No user save');
+			return;
+		}
+
+		const payload: IPlayerSave = JSON.parse(
+			localStorage.getItem('asteroids/player')!
+		);
+
+		this.highScore = payload.highScore;
+	}
+
 	// Public Methods ---------------------------------------
 	public update() {
 		this.handleScreenBorders();
@@ -195,6 +206,28 @@ class Player implements IPlayer {
 
 	public addScore() {
 		this.score += 10;
+	}
+
+	public get getScore() {
+		return this.score;
+	}
+
+	public get getHighScore() {
+		return this.highScore;
+	}
+
+	public reset() {
+		this.handleLoad();
+		this.x = 0;
+		this.y = 0;
+		this.angle = 0;
+		this.active = true;
+		this.lives = 3;
+		this.velocity = new Vec2(0, 0);
+		this.acceleration = new Vec2(0, 0);
+		this.cooldown = 0;
+		this.cooldownDecrement = 2.5;
+		this.hitPrepared = true;
 	}
 }
 

@@ -2,22 +2,21 @@
 
 This is my clone of old Atari game with the same name. It's written entirely in `TypeScript` with use of [arrow-js](https://www.arrow-js.com/#watching-data)
 
-## Before starting the application
+<details>
+	<summary>
+		Game picture
+	</summary>
+	<img src="./Asteroids.png" alt="screenshot of the game">
+</details>
 
-Keep in mind, this application is not finished yet. To actually try it for yourself, you need to serve the compiled app somehow. (By node.js `http` module for example.)
+## Starting the application
 
-**express server as example**
+To actually run this application, you need to install dependencies and start a simple server.
 
-```javascript
-import express from 'express';
-import path from 'path';
+### Installing dependencies
 
-const port = 5500;
-const app = express();
+**yarn:** `yarn`
 
-app.get('/', express.static(path.resolve(__dirname, './dist/')));
+**npm:** `npm install`
 
-app.listen(port, () => {
-	console.log(`The server is now running at port: ${port}`);
-});
-```
+**Starting the server:** `node ./server.js`
