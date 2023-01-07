@@ -1,11 +1,35 @@
 import { gameConfig } from '../config';
 import { Asteroid } from '../entities/Asteroid';
 import { Bullet } from '../entities/Bullet';
+import { IEntity } from '../entities/IEntity';
 import { Particle } from '../entities/Particle';
 import { hero } from '../entities/Player';
 import { rects } from '../utils/Collision';
 
 class PlayManager {
+	private splitAsteroid(asteroid: Asteroid) {
+		const { entities } = gameConfig;
+		if (asteroid.w === 128) {
+			entities.push(
+				new Asteroid(asteroid.x, asteroid.y, 64, 100),
+				new Asteroid(asteroid.x, asteroid.y, 64, 100),
+				new Asteroid(asteroid.x, asteroid.y, 64, 100),
+				new Asteroid(asteroid.x, asteroid.y, 64, 100)
+			);
+		} else if (asteroid.w === 64) {
+			entities.push(
+				new Asteroid(asteroid.x, asteroid.y, 32, 150),
+				new Asteroid(asteroid.x, asteroid.y, 32, 150)
+			);
+		}
+
+		entities.push(
+			new Particle({ x: asteroid.x, y: asteroid.y }),
+			new Particle({ x: asteroid.x, y: asteroid.y }),
+			new Particle({ x: asteroid.x, y: asteroid.y })
+		);
+	}
+
 	private collision() {
 		const { entities } = gameConfig;
 		const asteroids = entities.filter((entity) => entity.id === 'ASTEROID');
@@ -13,54 +37,24 @@ class PlayManager {
 		const aliens = entities.filter((entity) => entity.id === 'ALIEN');
 
 		asteroids.forEach((asteroid) => {
-			if (rects(asteroid, hero)) {
+			if (rects(hero, asteroid)) {
 				hero.hit();
 				hero.addScore();
 				asteroid.active = false;
-				entities.push(
-					new Particle({ x: hero.x, y: hero.y }),
-					new Particle({ x: hero.x, y: hero.y }),
-					new Particle({ x: hero.x, y: hero.y })
-				);
-
-				if (asteroid.w === 64) {
-					entities.push(
-						new Asteroid(32, 300),
-						new Asteroid(32, 300),
-						new Asteroid(32, 300),
-						new Asteroid(32, 300)
-					);
-				}
+				this.splitAsteroid(asteroid as Asteroid);
 			}
 
 			bullets.forEach((bullet) => {
-				if (rects(asteroid, bullet)) {
-					asteroid.active = false;
+				let b = bullet as Bullet;
+				if (rects(asteroid, bullet) && b.owner === 'PLAYER') {
 					bullet.active = false;
+					asteroid.active = false;
 					hero.addScore();
-					entities.push(
-						new Particle({ x: asteroid.x, y: asteroid.y }),
-						new Particle({ x: asteroid.x, y: asteroid.y }),
-						new Particle({ x: asteroid.x, y: asteroid.y })
-					);
-
-					if (asteroid.w === 128) {
-						entities.push(
-							new Asteroid(asteroid.x, asteroid.y, 64, 100),
-							new Asteroid(asteroid.x, asteroid.y, 64, 100),
-							new Asteroid(asteroid.x, asteroid.y, 64, 100),
-							new Asteroid(asteroid.x, asteroid.y, 64, 100)
-						);
-					} else if (asteroid.w === 64) {
-						entities.push(
-							new Asteroid(asteroid.x, asteroid.y, 32, 150),
-							new Asteroid(asteroid.x, asteroid.y, 32, 150)
-						);
-					}
+					this.splitAsteroid(asteroid as Asteroid);
 				}
 
 				aliens.forEach((alien) => {
-					let b: Bullet = bullet as Bullet;
+					let b = bullet as Bullet;
 
 					if (rects(alien, bullet) && b.owner === 'PLAYER') {
 						alien.active = false;

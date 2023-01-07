@@ -33,7 +33,7 @@ export class Particle implements IEntity {
 
 		setTimeout(() => {
 			this.active = false;
-		}, 5000);
+		}, 2000);
 	}
 
 	public render() {

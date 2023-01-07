@@ -16,7 +16,7 @@ class Player implements IPlayer {
 	public y: number = 0;
 	public w: number = 32;
 	public h: number = 32;
-	public speed: number = 600;
+	public speed: number = 400;
 	public angle: number = 0;
 	public active: boolean = true;
 	public id: GameObject = 'PLAYER';
@@ -32,7 +32,7 @@ class Player implements IPlayer {
 	private highScore: number = 0;
 	private lives: number = 3;
 	private cooldown: number = 0;
-	private cooldownDecrement: number = 6;
+	private cooldownDecrement: number = 3;
 	private hitPrepared: boolean = true;
 
 	// Private Methods --------------------------------------

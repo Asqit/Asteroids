@@ -12,7 +12,7 @@ export default function GameOver(props: IGameOverProps) {
 	return html`
 		<section class="game-over">
 			<article class="game-over__container">
-				<h1>Game Over</h1>
+				<h1>Signal lost</h1>
 				<p>Your score was ${score}</p>
 				<p>highest achieved score was ${highScore}</p>
 				<button @click="${playAgain}">play again</button>
