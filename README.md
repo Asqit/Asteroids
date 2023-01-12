@@ -13,6 +13,10 @@ This is my clone of old Atari game with the same name. It's written entirely in 
 
 As for now the game needs to be it is advised to first make current bundle of the game via webpack script inside of `package.json` and then serve it with live-server or tiny `http / express` server.
 
+### GitHub pages
+
+I have also allowed github pages, so you can visit it via link in sidemenu.
+
 ### Installing dependencies
 
 The game is written in `TypeScript` and `Sass` to make my work more enjoyable. With that in mind you can be sure, that you need to install dependencies first and then transpiled all source into regular `.js & .css` files.
