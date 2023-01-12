@@ -2,14 +2,12 @@ const express = require('express');
 const path = require('path');
 
 const app = express();
+const PORT = process.env.PORT || process.argv[2] || 3000;
 
 app.use(express.static(path.join(__dirname, './public')));
-app.get('/', (req, res) => {
-	res.sendFile(path.resolve(__dirname, './public', 'index.html'));
-});
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
 	console.log(
-		`The server(${process.pid}) is now running on http://localhost:3000`
+		`The server(${process.pid}) is now running on http://localhost:${PORT}`
 	);
 });

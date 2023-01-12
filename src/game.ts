@@ -4,7 +4,7 @@ import { Perf } from './utils/Perf';
 
 class Game {
 	constructor() {
-		// We need to rebind `this` keyword
+		// We need this to rebind `this` keyword
 		this.loop = this.loop.bind(this);
 	}
 
