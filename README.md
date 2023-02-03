@@ -6,7 +6,7 @@ This is my clone of old Atari game with the same name. It's written entirely in 
 	<summary>
 		Game picture
 	</summary>
-	<img src="./Asteroids.png" alt="screenshot of the game">
+	<img src="./asteroids.gif" alt="screenshot of the game">
 </details>
 
 ## Starting the application
