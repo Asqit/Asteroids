@@ -1,22 +1,24 @@
-import { IEntity } from './entities/IEntity';
-import { Frame } from './utils/Frame';
-import { StateStack } from './utils/StateStack';
+import { IEntity } from "./entities/IEntity";
+import { createAudio } from "./utils/audio";
+import { Frame } from "./utils/Frame";
+import { StateStack } from "./utils/StateStack";
 
 export type GameObject =
-	| 'PLAYER'
-	| 'BULLET'
-	| 'ALIEN'
-	| 'ASTEROID'
-	| 'PARTICLE';
+  | "PLAYER"
+  | "BULLET"
+  | "ALIEN"
+  | "ASTEROID"
+  | "PARTICLE";
 
 interface IGameConfig {
-	frame: Frame;
-	ctx: RenderingContext;
-	stateStack: StateStack;
-	id: number;
-	width: number;
-	height: number;
-	entities: IEntity[];
+  frame: Frame;
+  ctx: RenderingContext;
+  stateStack: StateStack;
+  id: number;
+  width: number;
+  height: number;
+  entities: IEntity[];
+  explosion: HTMLAudioElement;
 }
 
 // Preparing properties
@@ -25,10 +27,11 @@ const HEIGHT = innerHeight;
 const stateStack = new StateStack();
 const frame = new Frame(WIDTH, HEIGHT);
 
-frame.setRenderingContext('2d');
+frame.setRenderingContext("2d");
 
 const ctx = frame.getRenderingContext!;
 const entities: IEntity[] = [];
+const explosion = createAudio("./assets/sfx/explosion.wav", {});
 
 /**
  * **Description:** Since objects are passed by reference I created this object which basically allows access
@@ -36,11 +39,12 @@ const entities: IEntity[] = [];
  * Subscriber/notifier pattern.
  */
 export const gameConfig: IGameConfig = {
-	stateStack,
-	frame,
-	ctx,
-	width: WIDTH,
-	height: HEIGHT,
-	id: 0,
-	entities,
+  stateStack,
+  frame,
+  ctx,
+  width: WIDTH,
+  height: HEIGHT,
+  id: 0,
+  entities,
+  explosion,
 };

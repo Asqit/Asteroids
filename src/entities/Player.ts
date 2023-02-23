@@ -1,234 +1,241 @@
-import { GameObject, gameConfig } from '../config';
-import { isDown } from '../utils/Input';
-import { Vec2 } from '../utils/Maths';
-import { delta } from '../utils/Perf';
-import { Bullet } from './Bullet';
-import { IEntity } from './IEntity';
+import { GameObject, gameConfig } from "../config";
+import { createAudio } from "../utils/audio";
+import { isDown } from "../utils/Input";
+import { Vec2 } from "../utils/Maths";
+import { delta } from "../utils/Perf";
+import { Bullet } from "./Bullet";
+import { IEntity } from "./IEntity";
 
 interface IPlayer extends IEntity {}
 
 interface IPlayerSave {
-	highScore: number;
+  highScore: number;
 }
 
 class Player implements IPlayer {
-	public x: number = 0;
-	public y: number = 0;
-	public w: number = 32;
-	public h: number = 32;
-	public speed: number = 400;
-	public angle: number = 0;
-	public active: boolean = true;
-	public id: GameObject = 'PLAYER';
+  public x: number = 0;
+  public y: number = 0;
+  public w: number = 32;
+  public h: number = 32;
+  public speed: number = 400;
+  public angle: number = 0;
+  public active: boolean = true;
+  public id: GameObject = "PLAYER";
 
-	/**
-	 * Implemented physics system from [this](https://codepen.io/OliverBalfour/pen/jqympW) page
-	 */
-	private velocity: Vec2 = new Vec2(0, 0);
-	private acceleration: Vec2 = new Vec2(0, 0);
-	private friction: number = 0.99;
+  /**
+   * Implemented physics system from [this](https://codepen.io/OliverBalfour/pen/jqympW) page
+   */
+  private velocity: Vec2 = new Vec2(0, 0);
+  private acceleration: Vec2 = new Vec2(0, 0);
+  private friction: number = 0.99;
 
-	private score: number = 0;
-	private highScore: number = 0;
-	private lives: number = 3;
-	private cooldown: number = 0;
-	private cooldownDecrement: number = 3;
-	private hitPrepared: boolean = true;
+  private score: number = 0;
+  private highScore: number = 0;
+  private lives: number = 3;
+  private cooldown: number = 0;
+  private cooldownDecrement: number = 3;
+  private hitPrepared: boolean = true;
+  private shootSound: HTMLAudioElement = createAudio(
+    "./assets/sfx/laserShoot.wav",
+    {}
+  );
 
-	// Private Methods --------------------------------------
-	private renderUi() {
-		const ctx = gameConfig.ctx as CanvasRenderingContext2D;
-		ctx.font = '20px monospace';
-		ctx.fillStyle = '#fff';
-		ctx.fillText(`score: ${this.score}`, 30, 30);
-		ctx.fillText(`lives: ${this.lives}`, 30, 60);
-	}
+  // Private Methods --------------------------------------
+  private renderUi() {
+    const ctx = gameConfig.ctx as CanvasRenderingContext2D;
+    ctx.font = "20px monospace";
+    ctx.fillStyle = "#fff";
+    ctx.fillText(`score: ${this.score}`, 30, 30);
+    ctx.fillText(`lives: ${this.lives}`, 30, 60);
+  }
 
-	private renderPlayer() {
-		const ctx = gameConfig.ctx as CanvasRenderingContext2D;
+  private renderPlayer() {
+    const ctx = gameConfig.ctx as CanvasRenderingContext2D;
 
-		ctx.save();
-		ctx.translate(this.x + this.w / 2, this.y + this.h / 2);
-		ctx.rotate(this.angle);
+    ctx.save();
+    ctx.translate(this.x + this.w / 2, this.y + this.h / 2);
+    ctx.rotate(this.angle);
 
-		let x = -this.w / 2;
-		let y = -this.h / 2;
+    let x = -this.w / 2;
+    let y = -this.h / 2;
 
-		// Player triangle
-		ctx.strokeStyle = 'white';
-		ctx.beginPath();
-		ctx.moveTo(x, y);
-		ctx.lineTo(x + this.w, y + this.h / 2);
-		ctx.lineTo(x, y + this.h);
-		ctx.moveTo(x + this.w / 2, y + this.h / 2);
-		ctx.lineTo(x, y);
-		ctx.moveTo(x + this.w / 2, y + this.h / 2);
-		ctx.lineTo(x, y + this.h);
-		ctx.stroke();
+    // Player triangle
+    ctx.strokeStyle = "white";
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + this.w, y + this.h / 2);
+    ctx.lineTo(x, y + this.h);
+    ctx.moveTo(x + this.w / 2, y + this.h / 2);
+    ctx.lineTo(x, y);
+    ctx.moveTo(x + this.w / 2, y + this.h / 2);
+    ctx.lineTo(x, y + this.h);
+    ctx.fill();
+    ctx.stroke();
 
-		ctx.restore();
-	}
+    ctx.restore();
+  }
 
-	private shoot() {
-		if (this.cooldown <= 0) {
-			let x = this.x + this.w / 2;
-			let y = this.y + this.h / 2;
+  private shoot() {
+    if (this.cooldown <= 0) {
+      let x = this.x + this.w / 2;
+      let y = this.y + this.h / 2;
 
-			// Create a new bullet and bit of particles
-			gameConfig.entities.push(new Bullet('PLAYER', x, y, this.angle));
+      // Create a new bullet and bit of particles
+      gameConfig.entities.push(new Bullet("PLAYER", x, y, this.angle));
 
-			this.cooldown = 100;
-		}
-	}
+      this.shootSound.play();
 
-	private handleMovement() {
-		this.velocity.x += this.acceleration.x;
-		this.velocity.y += this.acceleration.y;
+      this.cooldown = 100;
+    }
+  }
 
-		this.velocity.x *= this.friction;
-		this.velocity.y *= this.friction;
+  private handleMovement() {
+    this.velocity.x += this.acceleration.x;
+    this.velocity.y += this.acceleration.y;
 
-		this.x += this.velocity.x * delta;
-		this.y += this.velocity.y * delta;
-	}
+    this.velocity.x *= this.friction;
+    this.velocity.y *= this.friction;
 
-	private handleInput() {
-		// Moving player
-		if (isDown('W')) {
-			this.acceleration.x = this.speed * Math.cos(this.angle) * delta;
-			this.acceleration.y = this.speed * Math.sin(this.angle) * delta;
-		} else {
-			this.acceleration.x = this.acceleration.y = 0;
-		}
+    this.x += this.velocity.x * delta;
+    this.y += this.velocity.y * delta;
+  }
 
-		// Rotating player
-		if (isDown('A')) {
-			this.angle -= 3 * delta;
-		} else if (isDown('D')) {
-			this.angle += 3 * delta;
-		}
+  private handleInput() {
+    // Moving player
+    if (isDown("W")) {
+      this.acceleration.x = this.speed * Math.cos(this.angle) * delta;
+      this.acceleration.y = this.speed * Math.sin(this.angle) * delta;
+    } else {
+      this.acceleration.x = this.acceleration.y = 0;
+    }
 
-		// Shooting
-		if (isDown('SPACE')) {
-			this.shoot();
-		}
-	}
+    // Rotating player
+    if (isDown("A")) {
+      this.angle -= 3 * delta;
+    } else if (isDown("D")) {
+      this.angle += 3 * delta;
+    }
 
-	private handleScreenBorders() {
-		const { width, height } = gameConfig;
+    // Shooting
+    if (isDown("SPACE")) {
+      this.shoot();
+    }
+  }
 
-		switch (true) {
-			case this.x < 0:
-				this.x = width - this.w;
-				break;
-			case this.x > width:
-				this.x = 0;
-				break;
-			case this.y < 0:
-				this.y = height - this.h;
-				break;
-			case this.y + this.h > height:
-				this.y = this.h;
-				break;
-		}
-	}
+  private handleScreenBorders() {
+    const { width, height } = gameConfig;
 
-	private handleCooldown() {
-		if (this.cooldown > 0) {
-			this.cooldown -= this.cooldownDecrement;
-		}
-	}
+    switch (true) {
+      case this.x < 0:
+        this.x = width - this.w;
+        break;
+      case this.x > width:
+        this.x = 0;
+        break;
+      case this.y < 0:
+        this.y = height - this.h;
+        break;
+      case this.y + this.h > height:
+        this.y = this.h;
+        break;
+    }
+  }
 
-	private handleSave() {
-		const SAVE_NAME = 'asteroids/player';
+  private handleCooldown() {
+    if (this.cooldown > 0) {
+      this.cooldown -= this.cooldownDecrement;
+    }
+  }
 
-		if (!localStorage.getItem(SAVE_NAME)) {
-			const payload: IPlayerSave = {
-				highScore: this.score,
-			};
+  private handleSave() {
+    const SAVE_NAME = "asteroids/player";
 
-			localStorage.setItem(SAVE_NAME, JSON.stringify(payload));
-		}
+    if (!localStorage.getItem(SAVE_NAME)) {
+      const payload: IPlayerSave = {
+        highScore: this.score,
+      };
 
-		const payload: IPlayerSave = JSON.parse(
-			localStorage.getItem(SAVE_NAME)!
-		);
+      localStorage.setItem(SAVE_NAME, JSON.stringify(payload));
+    }
 
-		payload.highScore =
-			this.score > payload.highScore ? this.score : payload.highScore;
+    const payload: IPlayerSave = JSON.parse(localStorage.getItem(SAVE_NAME)!);
 
-		localStorage.setItem(SAVE_NAME, JSON.stringify(payload));
-	}
+    payload.highScore =
+      this.score > payload.highScore ? this.score : payload.highScore;
 
-	private handleLoad() {
-		if (!localStorage.getItem('asteroids/player')) {
-			console.warn('No user save');
-			return;
-		}
+    localStorage.setItem(SAVE_NAME, JSON.stringify(payload));
+  }
 
-		const payload: IPlayerSave = JSON.parse(
-			localStorage.getItem('asteroids/player')!
-		);
+  private handleLoad() {
+    if (!localStorage.getItem("asteroids/player")) {
+      console.warn("No user save");
+      return;
+    }
 
-		this.highScore = payload.highScore;
-	}
+    const payload: IPlayerSave = JSON.parse(
+      localStorage.getItem("asteroids/player")!
+    );
 
-	// Public Methods ---------------------------------------
-	public update() {
-		this.handleScreenBorders();
-		this.handleInput();
-		this.handleMovement();
-		this.handleCooldown();
-	}
+    this.highScore = payload.highScore;
+  }
 
-	public render() {
-		this.renderPlayer();
-		this.renderUi();
-	}
+  // Public Methods ---------------------------------------
+  public update() {
+    this.handleScreenBorders();
+    this.handleInput();
+    this.handleMovement();
+    this.handleCooldown();
+  }
 
-	public hit() {
-		if (this.hitPrepared) {
-			if (this.lives <= 1) {
-				this.handleSave();
-				this.active = false;
-			}
+  public render() {
+    this.renderPlayer();
+    this.renderUi();
+  }
 
-			this.lives -= 1;
-			this.hitPrepared = false;
-		}
+  public hit() {
+    if (this.hitPrepared) {
+      if (this.lives <= 1) {
+        this.handleSave();
+        this.active = false;
+      }
 
-		setTimeout(() => (this.hitPrepared = true), 2000);
-	}
+      this.lives -= 1;
+      this.hitPrepared = false;
+    }
 
-	public isAlive() {
-		return this.active;
-	}
+    setTimeout(() => (this.hitPrepared = true), 2000);
+  }
 
-	public addScore() {
-		this.score += 10;
-	}
+  public isAlive() {
+    return this.active;
+  }
 
-	public get getScore() {
-		return this.score;
-	}
+  public addScore() {
+    this.score += 10;
+  }
 
-	public get getHighScore() {
-		return this.highScore;
-	}
+  public get getScore() {
+    return this.score;
+  }
 
-	public reset() {
-		this.handleLoad();
-		this.x = 0;
-		this.y = 0;
-		this.angle = 0;
-		this.active = true;
-		this.lives = 3;
-		this.velocity = new Vec2(0, 0);
-		this.acceleration = new Vec2(0, 0);
-		this.cooldown = 0;
-		this.cooldownDecrement = 2.5;
-		this.hitPrepared = true;
-	}
+  public get getHighScore() {
+    return this.highScore;
+  }
+
+  public reset() {
+    this.handleLoad();
+    this.x = 0;
+    this.y = 0;
+    this.angle = 0;
+    this.active = true;
+    this.lives = 3;
+    this.velocity = new Vec2(0, 0);
+    this.acceleration = new Vec2(0, 0);
+    this.cooldown = 0;
+    this.cooldownDecrement = 2.5;
+    this.hitPrepared = true;
+  }
 }
 
 /** **singleton** of class `Player` */
