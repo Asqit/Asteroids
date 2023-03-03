@@ -103,7 +103,7 @@ class Player implements IPlayer {
 
   private handleInput() {
     // Moving player
-    if (isDown("W")) {
+    if (isDown("W") || isDown("K")) {
       this.acceleration.x = this.speed * Math.cos(this.angle) * delta;
       this.acceleration.y = this.speed * Math.sin(this.angle) * delta;
     } else {
@@ -111,9 +111,9 @@ class Player implements IPlayer {
     }
 
     // Rotating player
-    if (isDown("A")) {
+    if (isDown("A") || isDown("H")) {
       this.angle -= 3 * delta;
-    } else if (isDown("D")) {
+    } else if (isDown("D") || isDown("L")) {
       this.angle += 3 * delta;
     }
 
